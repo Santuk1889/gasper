@@ -1,0 +1,39 @@
+{% extends "app/base.html" %} {% block content %}
+<h2>Ver Movimientos</h2>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Fecha</th>
+      <th>Concepto</th>
+      <th>Monto</th>
+      <th>Categoría</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for movimiento in object_list %}
+    <tr>
+      <td>{{ movimiento.fecha }}</td>
+      <td>{{ movimiento.concepto }}</td>
+      <td>{{ movimiento.monto }}</td>
+      <td>{{ movimiento.categoria }}</td>
+      <td>
+        <a
+          href="{% url 'app:detalle_movimiento' movimiento.pk %}"
+          class="btn btn-info"
+          >Ver Detalle</a
+        >
+        <a
+          href="{% url 'app:editar_movimiento' movimiento.pk %}"
+          class="btn btn-warning"
+          >Editar</a
+        >
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<a href="{% url 'app:crear_movimiento' %}" class="btn btn-primary"
+  >Crear Movimiento</a
+>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "app/base.html" %} {% block content %}
+<h2>Ver Categorías</h2>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Tipo</th>
+      <th>Categoría Padre</th>
+      <th>Nivel de Importancia</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for categoria in object_list %}
+    <tr>
+      <td>{{ categoria.nombre }}</td>
+      <td>{{ categoria.get_tipo_display }}</td>
+      <td>{{ categoria.categoria_padre }}</td>
+      <td>{{ categoria.nivel_importancia }}</td>
+      <td>
+        <a
+          href="{% url 'app:detalle_categoria' categoria.pk %}"
+          class="btn btn-info"
+          >Ver Detalle</a
+        >
+        <a
+          href="{% url 'app:editar_categoria' categoria.pk %}"
+          class="btn btn-warning"
+          >Editar</a
+        >
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<a href="{% url 'app:crear_categoria' %}" class="btn btn-primary"
+  >Crear Categoría</a
+>
+{% endblock %}

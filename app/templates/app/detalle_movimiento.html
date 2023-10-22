@@ -1,0 +1,14 @@
+{% extends "app/base.html" %} {% block content %}
+<h2>Detalle de Movimiento</h2>
+<dl class="row">
+  <dt class="col-sm-3">Fecha:</dt>
+  <dd class="col-sm-9">{{ object.fecha }}</dd>
+  <dt class="col-sm-3">Concepto:</dt>
+  <dd class="col-sm-9">{{ object.concepto }}</dd>
+  <dt class="col-sm-3">Monto:</dt>
+  <dd class="col-sm-9">{{ object.monto }}</dd>
+  <dt class="col-sm-3">Categoría:</dt>
+  <dd class="col-sm-9">{{ object.categoria }}</dd>
+</dl>
+<a href="{% url 'app:ver_movimientos' %}" class="btn btn-secondary">Volver</a>
+{% endblock %}

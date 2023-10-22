@@ -1,0 +1,14 @@
+{% extends "app/base.html" %} {% block content %}
+<h2>Detalle de Categoría</h2>
+<dl class="row">
+  <dt class="col-sm-3">Nombre:</dt>
+  <dd class="col-sm-9">{{ object.nombre }}</dd>
+  <dt class="col-sm-3">Tipo:</dt>
+  <dd class="col-sm-9">{{ object.get_tipo_display }}</dd>
+  <dt class="col-sm-3">Categoría Padre:</dt>
+  <dd class="col-sm-9">{{ object.categoria_padre }}</dd>
+  <dt class="col-sm-3">Nivel de Importancia:</dt>
+  <dd class="col-sm-9">{{ object.nivel_importancia }}</dd>
+</dl>
+<a href="{% url 'app:ver_categorias' %}" class="btn btn-secondary">Volver</a>
+{% endblock %}
