@@ -1,39 +1,58 @@
-{% extends "app/base.html" %} {% block content %}
-<h2>Ver Movimientos</h2>
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Fecha</th>
-      <th>Concepto</th>
-      <th>Monto</th>
-      <th>Categoría</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for movimiento in object_list %}
-    <tr>
-      <td>{{ movimiento.fecha }}</td>
-      <td>{{ movimiento.concepto }}</td>
-      <td>{{ movimiento.monto }}</td>
-      <td>{{ movimiento.categoria }}</td>
-      <td>
-        <a
-          href="{% url 'app:detalle_movimiento' movimiento.pk %}"
-          class="btn btn-info"
-          >Ver Detalle</a
-        >
-        <a
-          href="{% url 'app:editar_movimiento' movimiento.pk %}"
-          class="btn btn-warning"
-          >Editar</a
-        >
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-<a href="{% url 'app:crear_movimiento' %}" class="btn btn-primary"
-  >Crear Movimiento</a
->
+{% extends "app/base.html" %}
+
+{% block content %}
+  <h2>Ver Movimientos</h2>
+  <form method="get" action="{% url 'app:ver_movimientos' %}">
+    <label for="fecha_inicio">Filtrar por Fecha de Inicio:</label>
+    <input type="date" name="fecha_inicio" id="fecha_inicio">
+    
+    <label for="fecha_fin">Filtrar por Fecha de Fin:</label>
+    <input type="date" name="fecha_fin" id="fecha_fin">
+    
+    <label for="categoria">Filtrar por Categoría:</label>
+    <select name="categoria" id="categoria">
+      <option value="">Todas</option>
+      {% for categoria in categorias %}
+        <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
+      {% endfor %}
+    </select>
+
+    <button type="submit" class="btn btn-primary">Filtrar</button>
+  </form>
+
+  {% if mensaje_filtro %}
+    <div class="alert alert-info">
+      {{ mensaje_filtro }}
+    </div>
+  {% endif %}
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th><a href="?order_by=fecha">Fecha</a></th>
+        <th><a href="?order_by=concepto">Concepto</a></th>
+        <th><a href="?order_by=monto">Monto</a></th>
+        <th><a href="?order_by=categoria__nombre">Categoría</a></th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for movimiento in movimientos %}
+        <tr>
+          <td>{{ movimiento.fecha }}</td>
+          <td>{{ movimiento.concepto }}</td>
+          <td>{{ movimiento.monto }}</td>
+          <td>{{ movimiento.categoria }}</td>
+          <td>  
+              <a href="{% url 'app:detalle_movimiento' movimiento.pk %}" class="btn btn-info">Ver Detalle</a>
+              <a href="{% url 'app:editar_movimiento' movimiento.pk %}" class="btn btn-warning">Editar</a>
+              <a href="{% url 'app:eliminar_movimiento' movimiento.pk %}" class="btn btn-danger">Eliminar</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <a href="{% url 'app:crear_movimiento' %}" class="btn btn-primary">Crear Movimiento</a>
+</div>
 {% endblock %}

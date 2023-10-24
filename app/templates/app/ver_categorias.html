@@ -7,6 +7,7 @@
       <th>Tipo</th>
       <th>Categoría Padre</th>
       <th>Nivel de Importancia</th>
+      <th>Total</th>
       <th>Acciones</th>
     </tr>
   </thead>
@@ -17,6 +18,7 @@
       <td>{{ categoria.get_tipo_display }}</td>
       <td>{{ categoria.categoria_padre }}</td>
       <td>{{ categoria.nivel_importancia }}</td>
+      <td>{{ categoria.total}}</td>
       <td>
         <a
           href="{% url 'app:detalle_categoria' categoria.pk %}"
