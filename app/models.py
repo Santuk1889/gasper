@@ -21,16 +21,17 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nombre
 
-    def actualizar_total(self):
+    def actualizar_total(self, save=True):
         # Calcular el total sumando los montos de los movimientos relacionados
         if self.pk is not None:
             total = Movimiento.objects.filter(categoria=self).aggregate(total=models.Sum('monto'))['total'] or 0.00
             self.total = total
-            self.save()
+            if save:
+                self.save()  # Guardar solo si se establece save en True
 
     def save(self, *args, **kwargs):
         # Antes de guardar, actualiza el total
-        self.actualizar_total()
+        self.actualizar_total(save=False)  # No guardar automáticamente aquí
         super(Categoria, self).save(*args, **kwargs)
 
 class Movimiento(models.Model):
