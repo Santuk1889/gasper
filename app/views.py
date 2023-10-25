@@ -1,17 +1,26 @@
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
+from django.views.generic import (
+    CreateView,
+    ListView,
+    DetailView,
+    UpdateView,
+    DeleteView,
+)
 from .models import Categoria, Movimiento
 from .forms import CategoriaForm, MovimientoForm
 from django.shortcuts import render, get_object_or_404
+from django.db.models import Sum
+
 
 def renderizar_base(request):
-    return render(request, 'app/base.html')
+    return render(request, "app/base.html")
+
 
 class CrearMovimientoView(CreateView):
     model = Movimiento
     form_class = MovimientoForm
-    template_name = 'app/crear_movimiento.html'
-    success_url = reverse_lazy('app:ver_movimientos')
+    template_name = "app/crear_movimiento.html"
+    success_url = reverse_lazy("app:ver_movimientos")
 
     def form_valid(self, form):
         movimiento = form.save(commit=False)
@@ -22,19 +31,20 @@ class CrearMovimientoView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categorias'] = Categoria.objects.all()
+        context["categorias"] = Categoria.objects.all()
         return context
+
 
 class VerMovimientosView(ListView):
     model = Movimiento
-    template_name = 'app/ver_movimientos.html'
-    context_object_name = 'movimientos'
+    template_name = "app/ver_movimientos.html"
+    context_object_name = "movimientos"
 
     def get_queryset(self):
-        fecha_inicio = self.request.GET.get('fecha_inicio')
-        fecha_fin = self.request.GET.get('fecha_fin')
-        categoria = self.request.GET.get('categoria')
-        order_by = self.request.GET.get('order_by', '-fecha')
+        fecha_inicio = self.request.GET.get("fecha_inicio")
+        fecha_fin = self.request.GET.get("fecha_fin")
+        categoria = self.request.GET.get("categoria")
+        order_by = self.request.GET.get("order_by", "-fecha")
         queryset = Movimiento.objects.all()
 
         if fecha_inicio and fecha_fin:
@@ -47,10 +57,10 @@ class VerMovimientosView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categorias'] = Categoria.objects.all()
-        fecha_inicio = self.request.GET.get('fecha_inicio')
-        fecha_fin = self.request.GET.get('fecha_fin')
-        categoria = self.request.GET.get('categoria')
+        context["categorias"] = Categoria.objects.all()
+        fecha_inicio = self.request.GET.get("fecha_inicio")
+        fecha_fin = self.request.GET.get("fecha_fin")
+        categoria = self.request.GET.get("categoria")
         mensaje_filtro = "Se han aplicado los siguientes filtros: "
 
         if fecha_inicio:
@@ -61,19 +71,46 @@ class VerMovimientosView(ListView):
             categoria_obj = Categoria.objects.get(id=categoria)
             mensaje_filtro += f"Categoría: {categoria_obj.nombre}"
 
-        context['mensaje_filtro'] = mensaje_filtro
-        context['order_by'] = self.request.GET.get('order_by', '-fecha')
+        # Llama a la función calcular_disponibilidad y pasa el resultado al contexto
+        context["disponibilidad"] = self.calcular_disponibilidad()
+
+        context["mensaje_filtro"] = mensaje_filtro
+        context["order_by"] = self.request.GET.get("order_by", "-fecha")
         return context
+
+    def calcular_disponibilidad(self):
+        # Calcular la suma de ingresos
+        suma_ingresos = (
+            Categoria.objects.filter(tipo=Categoria.INGRESO).aggregate(
+                total=Sum("total")
+            )["total"]
+            or 0
+        )
+
+        # Calcular la suma de egresos
+        suma_egresos = (
+            Categoria.objects.filter(tipo=Categoria.EGRESO).aggregate(
+                total=Sum("total")
+            )["total"]
+            or 0
+        )
+
+        # Calcular la disponibilidad (suma de ingresos - suma de egresos)
+        disponibilidad = suma_ingresos - suma_egresos
+
+        return disponibilidad
+
 
 class DetalleMovimientoView(DetailView):
     model = Movimiento
-    template_name = 'app/detalle_movimiento.html'
+    template_name = "app/detalle_movimiento.html"
+
 
 class EditarMovimientoView(UpdateView):
     model = Movimiento
     form_class = MovimientoForm
-    template_name = 'app/editar_movimiento.html'
-    success_url = reverse_lazy('app:ver_movimientos')
+    template_name = "app/editar_movimiento.html"
+    success_url = reverse_lazy("app:ver_movimientos")
 
     def form_valid(self, form):
         movimiento_anterior = get_object_or_404(Movimiento, pk=self.object.pk)
@@ -86,10 +123,11 @@ class EditarMovimientoView(UpdateView):
         self.object.categoria.save()
         return response
 
+
 class EliminarMovimientoView(DeleteView):
     model = Movimiento
-    template_name = 'app/eliminar_movimiento.html'
-    success_url = reverse_lazy('app:ver_movimientos')
+    template_name = "app/eliminar_movimiento.html"
+    success_url = reverse_lazy("app:ver_movimientos")
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -99,26 +137,31 @@ class EliminarMovimientoView(DeleteView):
         self.object.categoria.save()
         return response
 
+
 class CrearCategoriaView(CreateView):
     model = Categoria
     form_class = CategoriaForm
-    template_name = 'app/crear_categoria.html'
-    success_url = reverse_lazy('app:ver_categorias')
+    template_name = "app/crear_categoria.html"
+    success_url = reverse_lazy("app:ver_categorias")
+
 
 class VerCategoriasView(ListView):
     model = Categoria
-    template_name = 'app/ver_categorias.html'
+    template_name = "app/ver_categorias.html"
+
 
 class DetalleCategoriaView(DetailView):
     model = Categoria
-    template_name = 'app/detalle_categoria.html'
+    template_name = "app/detalle_categoria.html"
+
 
 class EditarCategoriaView(UpdateView):
     model = Categoria
     form_class = CategoriaForm
-    template_name = 'app/editar_categoria.html'
-    success_url = reverse_lazy('app:ver_categorias')
+    template_name = "app/editar_categoria.html"
+    success_url = reverse_lazy("app:ver_categorias")
+
 
 class EliminarCategoriaView(DeleteView):
     model = Categoria
-    template_name = 'app/eliminar_categoria.html'
+    template_name = "app/eliminar_categoria.html"

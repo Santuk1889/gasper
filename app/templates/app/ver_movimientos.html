@@ -7,7 +7,7 @@
     <input type="date" name="fecha_inicio" id="fecha_inicio">
     
     <label for="fecha_fin">Filtrar por Fecha de Fin:</label>
-    <input type="date" name="fecha_fin" id="fecha_fin">
+    <input type="date" name "fecha_fin" id="fecha_fin">
     
     <label for="categoria">Filtrar por Categoría:</label>
     <select name="categoria" id="categoria">
@@ -50,9 +50,16 @@
           </td>
         </tr>
       {% endfor %}
+      <tr>
+        <td></td>
+        <td style="font-weight: bold;">Saldo Disponible:</td>
+        <td style="font-weight: bold;">$ {{ disponibilidad }}</td>
+        <td></td>
+        <td></td>
+      </tr>
     </tbody>
   </table>
 
-  <a href="{% url 'app:crear_movimiento' %}" class="btn btn-primary">Crear Movimiento</a>
+  <a href="{% url 'app:crear_movimiento' %}" class="btn btn-primary" style="margin-bottom: 10px;">Crear Movimiento</a>
 </div>
 {% endblock %}

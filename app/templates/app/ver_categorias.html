@@ -16,7 +16,7 @@
     <tr>
       <td>{{ categoria.nombre }}</td>
       <td>{{ categoria.get_tipo_display }}</td>
-      <td>{{ categoria.categoria_padre }}</td>
+      <td>{{ categoria.categoria_padre|default:"No posee" }}</td>
       <td>{{ categoria.nivel_importancia }}</td>
       <td>{{ categoria.total}}</td>
       <td>

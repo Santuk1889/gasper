@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
+
 class Categoria(models.Model):
     INGRESO = "I"
     EGRESO = "E"
@@ -24,7 +25,12 @@ class Categoria(models.Model):
     def actualizar_total(self, save=True):
         # Calcular el total sumando los montos de los movimientos relacionados
         if self.pk is not None:
-            total = Movimiento.objects.filter(categoria=self).aggregate(total=models.Sum('monto'))['total'] or 0.00
+            total = (
+                Movimiento.objects.filter(categoria=self).aggregate(
+                    total=models.Sum("monto")
+                )["total"]
+                or 0.00
+            )
             self.total = total
             if save:
                 self.save()  # Guardar solo si se establece save en True
@@ -33,6 +39,7 @@ class Categoria(models.Model):
         # Antes de guardar, actualiza el total
         self.actualizar_total(save=False)  # No guardar automáticamente aquí
         super(Categoria, self).save(*args, **kwargs)
+
 
 class Movimiento(models.Model):
     fecha = models.DateField()
@@ -43,9 +50,9 @@ class Movimiento(models.Model):
     def __str__(self):
         return f"{self.concepto} - {self.fecha}"
 
+
 @receiver(post_save, sender=Movimiento)
 @receiver(post_delete, sender=Movimiento)
 def actualizar_categoria_total(sender, instance, **kwargs):
     # Esto actualiza la categoría relacionada cuando se guarda o elimina un movimiento
     instance.categoria.actualizar_total()
-

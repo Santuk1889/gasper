@@ -6,7 +6,7 @@
   <dt class="col-sm-3">Tipo:</dt>
   <dd class="col-sm-9">{{ object.get_tipo_display }}</dd>
   <dt class="col-sm-3">Categoría Padre:</dt>
-  <dd class="col-sm-9">{{ object.categoria_padre }}</dd>
+  <dd class="col-sm-9">{{ object.categoria_padre|default:"No posee" }}</dd>
   <dt class="col-sm-3">Nivel de Importancia:</dt>
   <dd class="col-sm-9">{{ object.nivel_importancia }}</dd>
 </dl>
